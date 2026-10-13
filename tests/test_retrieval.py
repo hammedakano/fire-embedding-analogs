@@ -65,12 +65,19 @@ def test_analog_mean_is_nan_when_nothing_is_observed():
     assert np.isnan(retrieval.predict_analog_mean(np.array([0, 1]), observed))
 
 
-def test_slope_only_transfer_averages_fuel_groups_out():
-    # 16 cells whose value depends only on the slope bin.
-    single = np.tile(np.array([0.1, 0.2, 0.3, 0.4]), 4).reshape(1, 16)
-    full = retrieval.predict_fuel_slope_mean(np.array([0]), single)
-    slope_only = retrieval.predict_slope_only(np.array([0]), single)
-    assert full == pytest.approx(slope_only)
+def test_fuel_slope_transfer_is_the_unweighted_cell_mean():
+    matrix = np.arange(32, dtype=float).reshape(2, 16) / 32.0
+    expected = matrix.mean()
+    assert retrieval.predict_fuel_slope_mean(np.array([0, 1]), matrix) == pytest.approx(expected)
+
+
+def test_tied_scores_keep_pool_order():
+    # Three candidates tie on score. The stable sort must keep pool order,
+    # so the result is the same on every machine and NumPy version.
+    scores = np.array([0.5, 0.9, 0.5, 0.5])
+    pool = np.array([0, 2, 3, 1])
+    top = retrieval.top_k_indices(scores, pool, k=3, higher_better=True)
+    assert list(top) == [1, 0, 2]
 
 
 def test_cell_probabilities_and_disagreement_align(synthetic_library):

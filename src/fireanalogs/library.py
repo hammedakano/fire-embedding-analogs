@@ -117,7 +117,13 @@ def load_library(
 
     emb_cols = embedding_columns(n_emb_dims)
     missing_embedding = library[emb_cols].isna().all(axis=1)
-    library = library[~missing_embedding].reset_index(drop=True)
+    library = library[~missing_embedding]
+
+    # Canonical row order. Every similarity and distance matrix is built from
+    # this one table, so row i always means the same fire in every matrix, and
+    # results do not depend on the order in which the CSV files were read.
+    library = library.sort_values(["event_date", "fire_id"], kind="stable")
+    library = library.reset_index(drop=True)
 
     return add_observed_high_fraction(library)
 

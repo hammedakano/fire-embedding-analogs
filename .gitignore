@@ -8,14 +8,10 @@
 ~/.config/earthengine/
 
 # Data. Large inputs and outputs live on Zenodo, not in git.
-data/raw/
-data/interim/
-data/rasters/
-data/*.csv
-!data/manifests/*.csv
-results/*.csv
-results/*.png
-results/*.tif
+data/*
+!data/manifests/
+results/*
+!results/README.md
 
 # Python
 __pycache__/

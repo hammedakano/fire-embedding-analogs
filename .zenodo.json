@@ -3,11 +3,26 @@
   "upload_type": "software",
   "license": "MIT",
   "creators": [
-    { "name": "Akano, Hammed", "affiliation": "Deakin University" },
-    { "name": "Naicker, Rowan", "affiliation": "University of KwaZulu-Natal" },
-    { "name": "Crabbe, Richard A.", "affiliation": "Charles Darwin University" },
-    { "name": "Young, Mary", "affiliation": "Deakin University" },
-    { "name": "Odebiri, Omosalewa", "affiliation": "Deakin University" }
+    {
+      "name": "Akano, Hammed",
+      "affiliation": "Deakin University"
+    },
+    {
+      "name": "Naicker, Rowan",
+      "affiliation": "University of KwaZulu-Natal"
+    },
+    {
+      "name": "Crabbe, Richard A.",
+      "affiliation": "Charles Darwin University"
+    },
+    {
+      "name": "Young, Mary",
+      "affiliation": "Deakin University"
+    },
+    {
+      "name": "Odebiri, Omosalewa",
+      "affiliation": "Deakin University"
+    }
   ],
   "keywords": [
     "wildfire",
@@ -18,5 +33,5 @@
     "Google Earth Engine",
     "Victoria Australia"
   ],
-  "description": "Reference implementation and derived data for a retrieval-augmented analog framework that uses pre-fire satellite foundation embeddings to retrieve analogous historical fires and transfer their observed fuel by slope high-severity probabilities to withheld target fires, with built-surface exposure screening."
+  "description": "Reference implementation for a retrieval-augmented analog framework that uses pre-fire Google Satellite Embedding V1 vectors to retrieve similar historical fires and transfer their observed high-severity behaviour to withheld target fires, with built-surface exposure screening. One command reproduces every reported table, number and figure from the companion data archive on Zenodo."
 }

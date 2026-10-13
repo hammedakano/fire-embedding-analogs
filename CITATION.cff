@@ -1,8 +1,10 @@
 cff-version: 1.2.0
-message: "If you use this software or the archived data, please cite both the software and the paper."
+message: "If you use this software or the archived data, please cite the paper, the software and the data."
+repository-code: "https://github.com/YOUR-GITHUB-USERNAME/fire-embedding-analogs"
+# doi: add the Zenodo concept DOI of this software after the first release
 title: "fireanalogs: retrieval-augmented analog prediction of wildfire burn severity"
 version: 1.0.0
-date-released: 2026-09-10
+date-released: 2026-10-14
 license: MIT
 type: software
 authors:

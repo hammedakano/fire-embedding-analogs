@@ -1,65 +1,70 @@
 # Reproducibility notes
 
-Things that will bite anyone rerunning this, recorded so they do not have to be
-rediscovered.
+Things that can go wrong when rerunning this analysis, written down so nobody
+has to rediscover them.
 
-## Exact reproduction is not guaranteed across versions
+## Guards built into the code
 
-**Nearest-neighbour tie-breaking.** `top_k_indices` ranks candidates with
-`numpy.argsort`. When two candidates have exactly equal scores the retained
-order depends on the sort implementation, so analog sets can differ between
-NumPy versions. Cosine similarities on 64-dimensional float embeddings tie only
-in degenerate cases, but the possibility is real. A FAISS-based nearest
-neighbour search would break ties differently again.
+**One table for every matrix.** The cosine similarity, geographic distance
+and day-of-year distance matrices must all be built from the same library
+table, in the same row order. If one of them comes from a copy of the library
+that was loaded in a different file order, row i means different fires in
+different matrices and the baseline predictions are silently wrong. An early
+working notebook had exactly this problem. `fireanalogs.pipeline.build_matrices`
+builds every matrix from one table, and `tests/test_row_order.py` fails if
+results change when the input files are read in a different order.
 
-**Earth Engine catalogue drift.** Collections can be revised in place. The
-Sentinel-2 harmonised collection, the GHSL built-surface product and the
-Satellite Embedding collection have all been revised at some point. Rerunning
-the export stage at a later date can therefore produce a slightly different
-library from the same code. Record the run date alongside any regenerated
-library.
+**Canonical row order and tie-breaking.** `load_library` sorts fires by event
+date and then fire ID. Top-K selection uses a stable sort, so candidates with
+exactly equal scores are taken in that order. This matters for the seasonal
+baseline, where many fires share a day of year. Different tie-breaking rules
+move seasonal RMSE by about plus or minus 0.006 but never change the paired
+test result.
 
-**Resampling at the 10 metre alignment step.** Slope is derived from a 30 metre
-DEM and reprojected to the 10 metre analysis grid by Earth Engine's default
-resampling. Changing the resampling method changes which pixels fall in which
-slope bin, and therefore changes the conditional probability tables.
+**Checked numbers.** `scripts/reproduce.py` compares 101 reported numbers with
+`config/expected_results.csv` and exits with an error if any differ.
+
+## Earth Engine exports can change
+
+**Catalogue revisions.** Sentinel-2, GHSL and the Satellite Embedding
+collection have all been revised in place at some point. Re-exporting the
+library later can give slightly different values from the same code. Record
+the export date with any regenerated library.
+
+**Resampling.** Slope comes from a 30 m DEM and is resampled to the 10 m grid
+by Earth Engine's default method. Another method changes which pixels fall in
+which slope bin.
+
+**Large fires.** Footprint means use `bestEffort=True`, so for very large
+fires Earth Engine may work at a coarser scale than 10 m.
 
 ## Choices that are easy to get wrong
 
 **Embedding year.** The embedding layer is an annual composite. The year before
-the event is used, clamped to the availability window in
-`config/default.yaml`. It is a pre-fire landscape descriptor, not a real-time
-condition layer, and it does not capture drying or curing in the weeks before
-ignition.
+the event is used, limited to the years available. It describes the landscape,
+not fuel drying in the weeks before ignition.
 
-**Mean pooling footprint.** The embedding vector for a fire is the mean over the
-whole fire polygon at 10 metre scale, with `bestEffort=True`. For very large
-fires Earth Engine may reduce the working scale to stay within limits, so the
-mean is not always taken at exactly 10 metres. Band order follows the
-collection's own order and is preserved by the `emb_A00` to `emb_A63` naming.
+**Fuel groups are a proxy.** Groups come from fixed NDVI and NDMI rules. They
+are a greenness and moisture gradient, not a vegetation map.
 
-**Fuel grouping is a proxy, not a fuel-type map.** Groups come from fixed NDVI
-and NDMI thresholds evaluated in order. Pixels matching none of rules 1 to 3
-fall into group 0. This is a broad greenness and moisture gradient, not a
-vegetation classification.
+**Two thresholds.** Pixel recall, F1 and built-surface recall are reported at
+0.5. The whole-footprint outcome table (`outcome_analysis.csv`) uses 0.3. Both
+are set in `config/default.yaml` and written into the output tables. Check
+which one a number used before quoting it.
 
-**Two decision thresholds are in play.** Built-surface recall uses 0.5. The
-whole-footprint outcome confusion matrices in the original working notebook used
-0.3. Both are recorded in `config/default.yaml` and carried in the output
-tables, so any published number can be traced to the threshold that produced
-it. Check which one a given figure or table used before quoting it.
+**Event-level prediction.** In leave-one-out validation the predicted
+high-severity fraction of a fire is the mean observed fraction of its K
+analogs. The fuel by slope transfer, which averages the analogs' 16
+conditional probability cells, is reported separately as a transfer-skill
+diagnostic and is what the probability maps use.
 
-**Unweighted cell means.** The fuel by slope transfer averages the 16 cells
-without weighting by pixel count. This is deliberate and matches the published
-diagnostic, but it is not the only defensible choice, and a pixel-weighted mean
-would give different numbers.
+**Unweighted cell means.** The fuel by slope summary averages the 16 cells
+without weighting by pixel count. A slope-only version that first averages
+out fuel groups gives exactly the same number under equal weights, so it is
+not offered as a comparison.
 
-## Before releasing
+## Before releasing a new version
 
-- Scrub notebook outputs that contain absolute Drive paths.
-- Confirm no Earth Engine service-account key or token is committed. `.gitignore`
-  covers the usual paths but is not a substitute for checking.
-- The fire asset ID in `config/default.yaml` points at the original author's
-  Earth Engine project. Anyone else must substitute their own copy.
-- Regenerate `requirements.txt` from the environment that produced the final
-  results, not from a fresh install.
+- Clear notebook outputs (they can contain local paths).
+- Check that no Earth Engine key or token is committed.
+- Rerun `python scripts/reproduce.py` and confirm all checks pass.

@@ -23,8 +23,8 @@ def embedding_columns(n_dims: int = 64) -> List[str]:
 def fuel_slope_columns() -> List[str]:
     """Column names of the 16 fuel by slope conditional probability cells.
 
-    Order is fuel-major, matching the reshape used in
-    :func:`fireanalogs.retrieval.predict_slope_only`.
+    Order is fuel-major: all four slope bins of fuel group 0, then fuel
+    group 1, and so on.
     """
     return [
         f"p_high_f{f}_s{s}"

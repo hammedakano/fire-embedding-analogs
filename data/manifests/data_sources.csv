@@ -1,7 +1,7 @@
-dataset,collection_id,provider,role,native_resolution_m,licence_note
-Sentinel-2 surface reflectance,COPERNICUS/S2_SR_HARMONIZED,ESA Copernicus,Pre and post fire composites for dNBR and fuel indices,10,Copernicus free and open
-Copernicus DEM GLO-30,COPERNICUS/DEM/GLO30,ESA,Slope and terrain summaries,30,ESA licence terms apply
-Google Satellite Embedding V1,GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL,Google,Pre-fire landscape representation for analog retrieval,10,Google Earth Engine terms of service
-Global Human Settlement Layer built surface,JRC/GHSL/P2023A/GHS_BUILT_S_10m,European Commission JRC,Built-surface mask for exposure screening,10,CC BY 4.0
-ERA5-Land hourly,ECMWF/ERA5_LAND/HOURLY,ECMWF Copernicus,Weather summary fields exported but not used in retrieval,11132,Copernicus free and open
-VicEmergency incident feed,projects/ee-hammedaakano/assets/VicFire_feed_pretty,Emergency Management Victoria,Burn-area perimeters and event dates,vector,Confirm attribution and redistribution terms
+dataset,collection_id,provider,role,native_resolution_m,licence
+Google Satellite Embedding V1,GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL,Google and Google DeepMind,Pre-fire landscape description used for analog retrieval,10,CC BY 4.0
+VicEmergency burn-area feed,user asset (see config/default.yaml),Emergency Management Victoria,Fire perimeters and event dates,vector,CC BY 3.0 AU
+Sentinel-2 surface reflectance,COPERNICUS/S2_SR_HARMONIZED,ESA Copernicus,Pre and post fire composites for dNBR and fuel indices,10,Copernicus free and open data licence
+Copernicus DEM GLO-30,COPERNICUS/DEM/GLO30,ESA Copernicus,Slope and terrain summaries,30,Copernicus DEM licence
+GHSL built-up surface R2023A,JRC/GHSL/P2023A/GHS_BUILT_S_10m,European Commission JRC,Built-surface mask for exposure screening,10,CC BY 4.0
+ERA5-Land hourly,ECMWF/ERA5_LAND/HOURLY,ECMWF Copernicus,Weather summaries exported but not used in the analysis,11132,Copernicus licence

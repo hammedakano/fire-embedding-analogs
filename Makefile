@@ -1,20 +1,24 @@
-.PHONY: install test lint figures clean smoke
+.PHONY: install data reproduce test notebooks clean
+
+RECORD ?=
 
 install:
 	pip install -e ".[dev]"
 
+data:
+	python scripts/download_data.py $(if $(RECORD),--record $(RECORD),)
+
+reproduce:
+	python scripts/reproduce.py
+
 test:
 	pytest -q
 
-smoke:
-	python -c "import fireanalogs; print('fireanalogs', fireanalogs.__version__, 'imports cleanly')"
-
-lint:
-	ruff check src tests
-
-figures:
-	jupyter nbconvert --to notebook --execute notebooks/05_figures.ipynb --output 05_figures.executed.ipynb
+notebooks:
+	cd notebooks && for nb in 0*.ipynb; do \
+		jupyter nbconvert --to notebook --execute "$$nb" --output "$${nb%.ipynb}.executed.ipynb" || exit 1; \
+	done
 
 clean:
 	find . -type d -name __pycache__ -exec rm -rf {} +
-	rm -rf .pytest_cache build dist *.egg-info
+	rm -rf .pytest_cache build dist *.egg-info src/*.egg-info notebooks/*.executed.ipynb

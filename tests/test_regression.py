@@ -45,15 +45,15 @@ def test_k_sensitivity_covers_every_requested_value(pipeline):
     assert (table["n_evaluated"] > 0).all()
 
 
-def test_transfer_ablation_produces_finite_errors(pipeline):
+def test_fuel_slope_transfer_produces_finite_summary(pipeline):
     library, cosine, _ = pipeline
-    ablation = robustness.transfer_function_ablation(
+    transfer = robustness.fuel_slope_transfer(
         library, cosine, fuel_slope_matrix(library), k=5
     )
-    assert len(ablation) > 0
-    summary = robustness.summarise_transfer_ablation(ablation)
-    assert np.isfinite(summary["rmse_fuelslope"])
-    assert np.isfinite(summary["rmse_slope_only"])
+    assert len(transfer) > 0
+    summary = robustness.summarise_fuel_slope_transfer(transfer)
+    for key in ("rmse", "mae", "bias", "pearson_r"):
+        assert np.isfinite(summary[key])
 
 
 def test_ensembles_sit_between_their_members(pipeline):

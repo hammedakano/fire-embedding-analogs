@@ -6,6 +6,12 @@ paths:
   data_root: "data"
   results_root: "results"
 
+zenodo:
+  # Record ID of the data archive, the number at the end of its Zenodo URL.
+  # Fill in after publishing, so that scripts/download_data.py works with no
+  # arguments.
+  record_id: null
+
 earth_engine:
   # Fire perimeter asset. Replace with your own copy of the VicEmergency
   # burn-area feed if you are not the original author.
@@ -55,6 +61,7 @@ retrieval:
   doy_norm_days: 182.0
 
 pixel_validation:
+  # Recall, precision and F1 for the four target fires are reported at 0.5.
   decision_threshold: 0.5
   threshold_sweep: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
   min_pixels_per_cell: 10    # calibration cells below this are dropped

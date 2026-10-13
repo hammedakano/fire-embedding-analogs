@@ -1,5 +1,5 @@
-fire_label,event_date,file_prefix,drive_folder_role,status,notes
-Berrys Lane Longwood,2026-01-12,20260112_33_berrys_lane_longwood_berrys_lane_long,site folder,unresolved,A second Berrys Lane export keyed 20260127_42 exists in the main folder. Confirm which event the paper reports before releasing.
-Streatham,2026-01-11,20260111_265_streatham_yalla_y_poora_road_name_fi,site folder,current,Largest Brier improvement reported in the manuscript
-Mount Mercer Shelford,2026-01-11,20260111_264_mount_mercer_shelford_mount_mercer_r,site folder,current,
-Walmer Fogartys Gap,2026-01-15,20260115_281_walmer_fogartys_gap_name_fire_name_d,site folder,current,Smallest Brier improvement reported in the manuscript
+fire_label,event_date,file_prefix,notes
+Berrys Lane Longwood,2026-01-12,20260112_33_berrys_lane_longwood_berrys_lane_long,The 20260112_33 export reproduces the reported Brier scores and exposure figures. An earlier export keyed 20260127_42 is superseded.
+Streatham,2026-01-11,20260111_265_streatham_yalla_y_poora_road_name_fi,Largest Brier improvement
+Mount Mercer,2026-01-11,20260111_264_mount_mercer_shelford_mount_mercer_r,
+Walmer-Fogartys Gap,2026-01-15,20260115_281_walmer_fogartys_gap_name_fire_name_d,Smallest Brier improvement

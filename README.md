@@ -1,104 +1,112 @@
 # fireanalogs
 
-Retrieval-augmented analog prediction of wildfire burn severity and
-built-surface exposure from geospatial foundation embeddings.
+Code for the paper *Geospatial foundation embeddings for analog-based
+screening of wildfire burn severity and built-surface exposure*.
 
-This repository is the reference implementation for the manuscript
-*Geospatial foundation embeddings for analog-based screening of wildfire burn
-severity and built-surface exposure*, covering the 2025-2026 Victorian fire
-season in south-eastern Australia.
+For a fire that has not been mapped yet, the method finds the most similar
+past fires and uses their observed burn severity to predict where severe fire
+is likely. "Similar" is measured with Google Satellite Embedding V1, a
+64-number description of the pre-fire landscape. The study covers 334 fires
+from the 2025 to 2026 fire season in Victoria, Australia.
 
-## What the method does
+## Reproduce the paper in four commands
 
-For a fire that has not yet been mapped, the framework retrieves the most
-similar historical fires and transfers their observed severity behaviour to it.
+You need Python 3.10 or newer and about 100 MB of disk space. No Google Earth
+Engine account is needed.
 
-1. Each fire is summarised by the mean of its pre-fire Google Satellite
-   Embedding V1 vector, 64 dimensions, taken over the fire footprint.
-2. Similarity between a target fire and each candidate is cosine similarity in
-   that embedding space. The top K candidates form the analog set.
-3. Each analog carries a table of observed high-severity probabilities across a
-   16-cell fuel by slope grid. Those tables are averaged over the analog set.
-4. The averaged table is mapped back onto the target footprint, giving a
-   probability surface, an analog-disagreement surface, and the list of which
-   analogs drove the prediction.
-5. The probability surface is intersected with built-surface data to screen
-   where severe fire is likely to coincide with built assets.
+    git clone https://github.com/YOUR-GITHUB-USERNAME/fire-embedding-analogs
+    cd fire-embedding-analogs
+    pip install -e .
+    python scripts/download_data.py --record ZENODO-RECORD-ID
+    python scripts/reproduce.py
 
-Three non-embedding baselines use the same transfer step but choose analogs by
-geographic distance, by day-of-year distance, or by both. Because only the
-retrieval step differs, any difference in skill is attributable to the
-retrieval space.
+The last command takes under a minute. It writes every table and figure to
+`results/` and then checks 101 reported numbers against
+`config/expected_results.csv`. It ends with a line such as
 
-## The prediction-time information rule
+    Checked 101 numbers against expected_results.csv: 101 match, 0 differ.
 
-Analog candidates are restricted to fires that occurred before the target
-event, so retrieval uses only information that would have been available when
-the prediction was made. This separates forward analog prediction from
-retrospective reconstruction, in which later fires can inform earlier ones and
-inflate apparent skill.
+If you prefer `make`, the same steps are `make install`, `make data RECORD=ID`
+and `make reproduce`.
 
-The same restriction is applied to every retrieval method, so the comparison is
-not affected by differences in candidate availability. Where fewer than K prior
-fires exist, which happens for events early in the season, the pool widens to
-all other fires. `fireanalogs.retrieval.fallback_report` counts how often that
-happens and is what the manuscript reports.
+To use exactly the package versions of the published run, install from
+`requirements.txt` (Python 3.11) or `environment.yml` (conda) first.
 
-## Repository layout
+## Where each result in the paper comes from
 
-    config/default.yaml       every parameter used in the published run
-    src/fireanalogs/          the importable package
-      gee/                    Earth Engine export code, needs authentication
-      library.py              merge the exported CSV chunks into one library
-      similarity.py           cosine, haversine and circular day-of-year
-      retrieval.py            pools, top-K selection, probability transfer
-      validation.py           leave-one-out validation and event metrics
-      statistics.py           Wilcoxon, Steiger and Holm-adjusted comparisons
-      robustness.py           K sweep, transfer ablation, ensembles
-      pixel.py                per-fire raster validation and calibration
-      exposure.py             built-surface exposure screening
-      figures.py              manuscript figures
-    notebooks/                one thin driver notebook per stage
-    tests/                    unit and regression tests
-    data/manifests/           file manifests and data source records
-    docs/reproducibility.md   known traps and version sensitivities
+| In the paper | File in `results/` |
+| --- | --- |
+| Table 2, event-level validation | `loo_metrics.csv`, per fire in `loo_results.csv` |
+| Table S5, paired tests | `method_comparison_wilcoxon_steiger_holm.csv` |
+| Section 3.3 and Figure 4, similarity and error | `similarity_error_quartiles.csv`, `fig_similarity_vs_error.png` |
+| Figure 5, choice of K | `k_sensitivity.csv`, `fig_k_sensitivity.png` |
+| Fuel by slope transfer skill | `fuel_slope_transfer.csv` |
+| Table 3, ensembles | `ensemble_comparison_holm.csv` |
+| Figure 6, pixel-level metrics | `pixel_validation_summary.csv`, `pixel_classification_metrics.csv` |
+| Figure 7 and Figure S2, spatial validation maps | `fig_spatial_validation_<fire>.png` |
+| Table S6, built-surface exposure | `built_exposure.csv` |
+| Every headline number in one place | `key_numbers.csv` |
 
-## Installation
+## Step by step instead
 
-    pip install -e ".[dev]"
-    make test
+The five notebooks in `notebooks/` run the same analysis one stage at a time
+and are easier to read.
 
-Earth Engine stages need the optional dependency and an authenticated session.
+| Notebook | What it does | Earth Engine needed |
+| --- | --- | --- |
+| `01_build_fire_library` | Merge the exported fire library files | Only to re-export |
+| `02_retrieval_and_loo` | Leave-one-out validation of the four retrieval methods | No |
+| `03_statistics_and_robustness` | Paired tests, choice of K, transfer skill, ensembles | No |
+| `04_pixel_validation` | Brier scores, calibration and exposure for one fire | Only to re-export |
+| `05_figures` | The paper figures | No |
+
+## Rerunning from raw satellite data
+
+The archived data are Earth Engine exports. To regenerate them you need an
+Earth Engine account and your own copy of the VicEmergency burn-area
+perimeters.
 
     pip install -e ".[gee]"
     earthengine authenticate
 
-## Running the pipeline
+Then set `earth_engine.fires_asset` in `config/default.yaml` to your asset and
+run the export cells in notebooks 01 and 04. Source collections are sometimes
+revised, so a fresh export can differ slightly from the archive.
+`docs/reproducibility.md` lists this and other known pitfalls.
 
-The stages are numbered and each writes the inputs the next one reads.
+## How the method works
 
-| Notebook | Stage | Needs Earth Engine |
-| --- | --- | --- |
-| `01_build_fire_library.ipynb` | Export and merge the fire library | Yes for export, no for merge |
-| `02_retrieval_and_loo.ipynb` | Similarity matrices and leave-one-out validation | No |
-| `03_statistics_and_robustness.ipynb` | Paired tests, K sweep, ablation, ensembles | No |
-| `04_pixel_validation.ipynb` | Per-fire rasters, Brier, calibration, exposure | Yes for export, no for analysis |
-| `05_figures.ipynb` | Manuscript figures | No |
+1. Each fire is described by the mean of its pre-fire Satellite Embedding
+   vectors over the fire footprint.
+2. For a target fire, the K most similar earlier fires are found by cosine
+   similarity (K = 7). Only fires that happened before the target are used,
+   unless fewer than K exist.
+3. The target's predicted high-severity fraction is the mean observed fraction
+   of those analogs. For maps, each analog's high-severity probability in 16
+   fuel by slope classes is averaged and painted back onto the target.
+4. Three baselines pick analogs by distance, by day of year, or by both. Only
+   the way analogs are picked changes, so differences in skill come from the
+   retrieval method alone.
 
-Stages 2, 3 and 5 run from the archived tables alone, so a reviewer can
-reproduce every reported number without an Earth Engine account.
+## Repository layout
 
-## Data
+    config/default.yaml           every setting used in the paper
+    config/expected_results.csv   the numbers reproduce.py checks against
+    scripts/download_data.py      fetch and verify the Zenodo data
+    scripts/reproduce.py          run the whole analysis
+    src/fireanalogs/              the Python package
+    notebooks/                    the same analysis, one stage at a time
+    tests/                        automated tests (run with pytest)
+    data/manifests/               the four target fires and the data sources
+    docs/reproducibility.md       known pitfalls
 
-Nothing large is stored in git. The archived data products are on Zenodo and
-described in `data/README.md`. Source datasets and their terms are recorded in
-`LICENSE-data.md`.
+## Data and licences
 
-## Licensing
-
-Code is MIT, in `LICENSE`. Derived data products are CC BY 4.0, in
-`LICENSE-data.md`, subject to the third-party terms recorded there.
+The data are archived on Zenodo, not in this repository. The code is under
+the MIT licence (`LICENSE`). The data are under CC BY 4.0 with the source
+attributions listed in `LICENSE-data.md`.
 
 ## Citation
 
-See `CITATION.cff`. Please cite both the software record and the paper.
+Please cite the paper, the software and the data. `CITATION.cff` has the
+details, and GitHub shows a "Cite this repository" button built from it.

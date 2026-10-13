@@ -74,16 +74,16 @@ def top_k_indices(
 ) -> np.ndarray:
     """The ``k`` best candidates in ``pool`` ranked by ``scores``.
 
-    Ties are broken by the order returned by :func:`numpy.argsort`, which is
-    stable for the default quicksort only up to implementation detail. Analog
-    sets can therefore differ between library versions when scores are exactly
-    equal. Cosine similarities on 64-dimensional float embeddings tie only in
-    degenerate cases, but this is recorded in ``docs/reproducibility.md``.
+    A stable sort is used, so candidates with exactly equal scores keep their
+    order in ``pool``. Because :func:`fireanalogs.library.load_library` sorts
+    the library by event date and fire ID, ties are broken the same way on
+    every machine, every NumPy version and every file order. This matters for
+    the seasonal baseline, where many fires share a day of year. Cosine
+    similarities on 64-dimensional float embeddings do not tie in practice.
     """
-    subset = scores[pool]
-    order = np.argsort(subset)
-    if higher_better:
-        order = order[::-1]
+    subset = np.asarray(scores)[pool]
+    key = -subset if higher_better else subset
+    order = np.argsort(key, kind="stable")
     return pool[order[:k]]
 
 
@@ -104,22 +104,14 @@ def predict_fuel_slope_mean(
     """Mean conditional probability across all 16 fuel by slope cells.
 
     This is an unweighted mean over cells, not weighted by the pixel count in
-    each cell. It reproduces the transfer-function diagnostic reported in the
-    manuscript.
+    each cell. It gives the event-level summary of the fuel by slope transfer
+    reported in the manuscript.
+
+    A slope-only variant (average the fuel groups out, then the slope bins) is
+    deliberately not provided. With equal weights it is algebraically the same
+    number as this function, so comparing the two tests nothing.
     """
     return float(fuel_slope_matrix[analog_indices].mean())
-
-
-def predict_slope_only(
-    analog_indices: np.ndarray, fuel_slope_matrix: np.ndarray
-) -> float:
-    """Slope-only transfer: average fuel groups out, then average slope bins.
-
-    Used as the ablation against which the full fuel by slope transfer is
-    compared.
-    """
-    block = fuel_slope_matrix[analog_indices].reshape(len(analog_indices), 4, 4)
-    return float(block.mean(axis=1).mean())
 
 
 def cell_probabilities(
