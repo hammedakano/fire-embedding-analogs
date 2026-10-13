@@ -38,11 +38,11 @@ To use exactly the package versions of the published run, install from
 | --- | --- |
 | Table 2, event-level validation | `loo_metrics.csv`, per fire in `loo_results.csv` |
 | Table S5, paired tests | `method_comparison_wilcoxon_steiger_holm.csv` |
-| Section 3.3 and Figure 4, similarity and error | `similarity_error_quartiles.csv`, `fig_similarity_vs_error.png` |
+| Section 3.3 and Figure 4, similarity and error | `similarity_error_quartiles.csv`, `Figure4_similarity_error.png` |
 | Figure 5, choice of K | `k_sensitivity.csv`, `fig_k_sensitivity.png` |
 | Fuel by slope transfer skill | `fuel_slope_transfer.csv` |
 | Table 3, ensembles | `ensemble_comparison_holm.csv` |
-| Figure 6, pixel-level metrics | `pixel_validation_summary.csv`, `pixel_classification_metrics.csv` |
+| Figure 6, pixel-level metrics (threshold 0.5) | `pixel_validation_summary.csv`, `pixel_classification_metrics.csv`, `Figure6_pixel_metrics.png` |
 | Figure 7 and Figure S2, spatial validation maps | `fig_spatial_validation_<fire>.png` |
 | Table S6, built-surface exposure | `built_exposure.csv` |
 | Every headline number in one place | `key_numbers.csv` |

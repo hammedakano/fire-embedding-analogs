@@ -247,3 +247,105 @@ def calibration_heatmap(calibration: pd.DataFrame, path=None):
     fig.tight_layout()
     _save(fig, path, DPI_PRINT)
     return fig
+
+
+def manuscript_figure4(loo: pd.DataFrame, path=None):
+    """Manuscript Figure 4: top-1 cosine similarity against absolute error.
+
+    Panel (a) is the scatter with a fitted linear trend and the Pearson and
+    Spearman statistics. Panel (b) shows absolute error by similarity quartile.
+    """
+    from scipy import stats
+
+    abs_error = (loo["pred_emb"] - loo["obs_high_frac"]).abs()
+    similarity = loo["top_cosine"]
+    pearson_r, pearson_p = stats.pearsonr(similarity, abs_error)
+    spearman_r, spearman_p = stats.spearmanr(similarity, abs_error)
+
+    def fmt(p):
+        return "p < 0.001" if p < 0.001 else f"p = {p:.3f}"
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 11 / 2.168))
+    axes[0].scatter(similarity, abs_error, s=10, alpha=0.6, color="#2f7bb6")
+    slope, intercept = np.polyfit(similarity, abs_error, 1)
+    xs = np.linspace(similarity.min(), 1, 50)
+    axes[0].plot(xs, slope * xs + intercept, "--", color="#0b3d6e", lw=1.5)
+    axes[0].set_xlabel("Top-1 cosine similarity", fontsize=13)
+    axes[0].set_ylabel("Absolute prediction error", fontsize=13)
+    axes[0].set_ylim(0, 1.05)
+    axes[0].set_xlim(similarity.min() - 0.005, 1.005)
+    axes[0].text(
+        0.02, 0.97,
+        f"Pearson r = {pearson_r:.3f}, {fmt(pearson_p)}\nSpearman ρ = {spearman_r:.3f}, {fmt(spearman_p)}",
+        transform=axes[0].transAxes, va="top", fontsize=10,
+        bbox=dict(boxstyle="round", fc="white", ec="0.6"),
+    )
+
+    quartile = pd.qcut(similarity, 4, labels=["Q1\n(lowest)", "Q2", "Q3", "Q4\n(highest)"])
+    groups = [abs_error[quartile == label].values for label in quartile.cat.categories]
+    boxes = axes[1].boxplot(
+        groups, patch_artist=True, showfliers=False, widths=0.55,
+        medianprops=dict(color="#e8711a", lw=2),
+    )
+    for box in boxes["boxes"]:
+        box.set(facecolor="#b3d1ea", edgecolor="0.35")
+    axes[1].plot(range(1, 5), [g.mean() for g in groups], "--o", color="#0b5a9c", ms=7, label="Mean")
+    axes[1].plot([], [], color="black", label="Median (boxplot line)")
+    axes[1].set_xticks(range(1, 5))
+    axes[1].set_xticklabels(quartile.cat.categories)
+    axes[1].set_xlabel("Cosine similarity quartile", fontsize=13)
+    axes[1].set_ylabel("Absolute prediction error", fontsize=13)
+    axes[1].set_ylim(0, 1.05)
+    axes[1].legend(frameon=False, loc="upper right")
+    for ax, label in zip(axes, ["(a)", "(b)"]):
+        ax.text(-0.1, 1.04, label, transform=ax.transAxes, fontsize=14, fontweight="bold")
+    fig.tight_layout()
+    if path is not None:
+        # fixed canvas, no tight cropping, so the aspect ratio matches the manuscript frame
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=DPI_PRINT)
+    return fig
+
+
+def manuscript_figure6(summary: pd.DataFrame, classification: pd.DataFrame, fires, labels=None, path=None):
+    """Manuscript Figure 6: Brier scores, and recall and F1 at one threshold.
+
+    ``summary`` is pixel_validation_summary.csv and ``classification`` is
+    pixel_classification_metrics.csv filtered to a single threshold.
+    """
+    labels = labels or fires
+    summary = summary.set_index("fire").loc[fires]
+    x = np.arange(len(fires))
+    width = 0.25
+    fig, axes = plt.subplots(1, 2, figsize=(11, 11 / 2.470))
+    axes[0].bar(x - width, summary["brier_emb"], width, label="Brier, embedding", color="#1f77b4")
+    axes[0].bar(x, summary["brier_geo"], width, label="Brier, geographic", color="#ff7f0e")
+    axes[0].bar(x + width, summary["brier_improvement"], width, label="Brier improvement", color="#2ca02c")
+    axes[0].legend(loc="upper left", fontsize=9)
+
+    def metric(method, column):
+        return classification[classification["method"] == method].set_index("fire").loc[fires, column].values
+
+    observed = []
+    for fire in fires:
+        row = classification[(classification["fire"] == fire) & (classification["method"] == "Embedding")].iloc[0]
+        observed.append((row.TP + row.FN) / (row.TP + row.FN + row.FP + row.TN))
+    axes[1].plot(x, metric("Embedding", "recall"), "-o", color="#1f77b4", label="Recall, embedding")
+    axes[1].plot(x, metric("Geographic", "recall"), "--o", color="#ff7f0e", label="Recall, geographic")
+    axes[1].plot(x, metric("Embedding", "f1"), "-s", color="#2ca02c", label="F1, embedding")
+    axes[1].plot(x, metric("Geographic", "f1"), "--s", color="#d62728", label="F1, geographic")
+    axes[1].plot(x, observed, "D", color="#1f77b4", ms=7, ls="none", label="Observed high-severity fraction")
+    axes[1].legend(loc="center", bbox_to_anchor=(0.52, 0.45), fontsize=8.5, framealpha=0.95)
+    for ax, label in zip(axes, ["(a)", "(b)"]):
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, fontweight="bold", fontsize=9)
+        ax.set_ylabel("Metric value", fontweight="bold")
+        ax.text(-0.12, 1.03, label, transform=ax.transAxes, fontsize=14, fontweight="bold")
+    axes[0].set_ylim(0, 1.05)
+    axes[1].set_ylim(-0.02, 1.05)
+    fig.tight_layout()
+    if path is not None:
+        # fixed canvas, no tight cropping, so the aspect ratio matches the manuscript frame
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(path, dpi=DPI_PRINT)
+    return fig

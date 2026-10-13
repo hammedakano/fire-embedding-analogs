@@ -70,6 +70,7 @@ def event_level(cfg: Config, data: Path, out: Path) -> list:
     figures.predicted_vs_observed(loo, out / "fig_pred_vs_obs.png")
     figures.similarity_vs_error(loo, r["similarity_error"]["by_quartile"], out / "fig_similarity_vs_error.png")
     figures.k_sensitivity(r["k_sensitivity"], cfg.k_default, out / "fig_k_sensitivity.png")
+    figures.manuscript_figure4(loo, out / "Figure4_similarity_error.png")
     plt.close("all")
 
     # Headline numbers, named so they can be checked one by one.
@@ -175,8 +176,14 @@ def pixel_level(cfg: Config, data: Path, out: Path) -> list:
             (f"{key}_built_recall_geographic", b["geo_recall_built"].iloc[0]),
         ]
 
-    pd.DataFrame(summaries).to_csv(out / "pixel_validation_summary.csv", index=False)
-    pd.concat(classes).to_csv(out / "pixel_classification_metrics.csv", index=False)
+    summary_table = pd.DataFrame(summaries)
+    class_table = pd.concat(classes)
+    summary_table.to_csv(out / "pixel_validation_summary.csv", index=False)
+    class_table.to_csv(out / "pixel_classification_metrics.csv", index=False)
+    labels = ["Berrys Lane\nLongwood", "Streatham", "Mount\nMercer", "Walmer-Fogartys\nGap"]
+    figures.manuscript_figure6(summary_table, class_table[class_table["threshold"] == decision],
+                               list(targets["fire_label"]), labels, out / "Figure6_pixel_metrics.png")
+    plt.close("all")
     pd.concat(built).to_csv(out / "built_exposure.csv", index=False)
     pd.concat(outcomes).to_csv(out / "outcome_analysis.csv", index=False)
     return rows
