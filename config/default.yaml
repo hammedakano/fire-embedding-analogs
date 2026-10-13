@@ -1,0 +1,69 @@
+# Configuration for the retrieval-augmented analog fire severity framework.
+# Every value used in the published analysis is recorded here.
+
+paths:
+  # Root that holds the fire library CSV exports and per-fire rasters.
+  data_root: "data"
+  results_root: "results"
+
+earth_engine:
+  # Fire perimeter asset. Replace with your own copy of the VicEmergency
+  # burn-area feed if you are not the original author.
+  fires_asset: "projects/ee-hammedaakano/assets/VicFire_feed_pretty"
+  embedding_collection: "GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL"
+  s2_collection: "COPERNICUS/S2_SR_HARMONIZED"
+  dem_collection: "COPERNICUS/DEM/GLO30"
+  era5_collection: "ECMWF/ERA5_LAND/HOURLY"
+  ghsl_collection: "JRC/GHSL/P2023A/GHS_BUILT_S_10m"
+  export_scale_m: 10
+  dem_scale_m: 30
+  era5_scale_m: 11132
+
+compositing:
+  pre_days: 120      # start of pre-fire window, days before event
+  pre_buffer: 15     # exclusion buffer immediately before event
+  post_buffer: 15    # exclusion buffer immediately after event
+  post_days: 120     # end of post-fire window, days after event
+
+severity:
+  # dNBR class breaks. Classes 2 and 3 are treated as high severity.
+  t1: 0.12
+  t2: 0.26
+  t3: 0.44
+  high_class_min: 2
+
+embedding:
+  n_dims: 64
+  min_year: 2017
+  max_year: 2024
+
+fuel:
+  # Fixed NDVI and NDMI decision rules, evaluated in this order.
+  # Pixels matching none of rules 1 to 3 fall into group 0.
+  ndvi_low: 0.30
+  ndvi_high: 0.50
+  ndmi_dry: 0.10
+  ndmi_moderate: 0.20
+
+slope_bins_deg: [10, 20, 30]
+
+retrieval:
+  k_default: 7
+  k_list: [3, 5, 7, 10, 15]
+  prior_only: true           # prediction-time information rule
+  geo_norm_km: 2000.0        # scaling for the geo-seasonal baseline
+  doy_norm_days: 182.0
+
+pixel_validation:
+  decision_threshold: 0.5
+  threshold_sweep: [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+  min_pixels_per_cell: 10    # calibration cells below this are dropped
+  reliability_bins: 10
+  min_pixels_per_bin: 50
+
+exposure:
+  # Outcome-analysis confusion matrices in the working notebook used 0.3.
+  # Built-exposure recall used 0.5. Both are recorded so the published
+  # numbers can be traced to the threshold that produced them.
+  outcome_threshold: 0.3
+  built_threshold: 0.5
