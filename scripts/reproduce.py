@@ -71,6 +71,7 @@ def event_level(cfg: Config, data: Path, out: Path) -> list:
     figures.similarity_vs_error(loo, r["similarity_error"]["by_quartile"], out / "fig_similarity_vs_error.png")
     figures.k_sensitivity(r["k_sensitivity"], cfg.k_default, out / "fig_k_sensitivity.png")
     figures.manuscript_figure4(loo, out / "Figure4_similarity_error.png")
+    figures.manuscript_figure5(r["k_sensitivity"], cfg.k_default, out / "Figure5_k_sensitivity.png")
     plt.close("all")
 
     # Headline numbers, named so they can be checked one by one.

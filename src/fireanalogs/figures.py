@@ -129,6 +129,25 @@ def k_sensitivity(k_table: pd.DataFrame, k_default: int = 7, path=None):
     return fig
 
 
+def manuscript_figure5(k_table: pd.DataFrame, k_default: int = 7, path=None):
+    """Figure 5 of the paper: RMSE and MAE against the number of analogs K."""
+    fig, ax = plt.subplots(figsize=(7.84, 4.64))
+    ax.plot(k_table["k"], k_table["rmse"], "-o", color="#1f77b4", lw=2, ms=7, label="RMSE")
+    ax.plot(k_table["k"], k_table["mae"], "--o", color="#ff7f0e", lw=1.6, ms=7, label="MAE")
+    ax.axvline(k_default, ls=":", color="#1f77b4", lw=1.3)
+    ax.text(k_default + 0.15, 0.41, f"Default (K={k_default})", fontsize=10, va="center")
+    ax.set_xticks(list(k_table["k"]))
+    ax.set_ylim(0.25, 0.42)
+    ax.set_xlabel("Number of analogs (K)", fontsize=13)
+    ax.set_ylabel("Error metric", fontsize=13)
+    ax.legend(frameon=False, fontsize=11)
+    ax.tick_params(labelsize=11)
+    fig.tight_layout()
+    if path is not None:
+        fig.savefig(path, dpi=DPI_PRINT)
+    return fig
+
+
 def spatial_validation(rasters, summary: dict, path=None):
     """Six-panel pixel-level validation figure for one target fire."""
     import matplotlib.pyplot as plt

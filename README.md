@@ -1,7 +1,8 @@
 # fireanalogs
 
-Code for the paper *Geospatial foundation embeddings for analog-based
-screening of wildfire burn severity and built-surface exposure*.
+Code for the paper *Geospatial foundation embeddings enable
+retrieval-augmented analog prediction of wildfire burn severity and built
+exposure*.
 
 For a fire that has not been mapped yet, the method finds the most similar
 past fires and uses their observed burn severity to predict where severe fire
@@ -39,7 +40,7 @@ To use exactly the package versions of the published run, install from
 | Table 2, event-level validation | `loo_metrics.csv`, per fire in `loo_results.csv` |
 | Table S5, paired tests | `method_comparison_wilcoxon_steiger_holm.csv` |
 | Section 3.3 and Figure 4, similarity and error | `similarity_error_quartiles.csv`, `Figure4_similarity_error.png` |
-| Figure 5, choice of K | `k_sensitivity.csv`, `fig_k_sensitivity.png` |
+| Figure 5, choice of K | `k_sensitivity.csv`, `Figure5_k_sensitivity.png` |
 | Fuel by slope transfer skill | `fuel_slope_transfer.csv` |
 | Table 3, ensembles | `ensemble_comparison_holm.csv` |
 | Figure 6, pixel-level metrics (threshold 0.5) | `pixel_validation_summary.csv`, `pixel_classification_metrics.csv`, `Figure6_pixel_metrics.png` |

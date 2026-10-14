@@ -31,7 +31,7 @@ keywords:
   - analog retrieval
 references:
   - type: article
-    title: "Geospatial foundation embeddings for analog-based screening of wildfire burn severity and built-surface exposure"
+    title: "Geospatial foundation embeddings enable retrieval-augmented analog prediction of wildfire burn severity and built exposure"
     authors:
       - family-names: Akano
         given-names: Hammed
