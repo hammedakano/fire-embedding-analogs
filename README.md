@@ -15,7 +15,7 @@ from the 2025 to 2026 fire season in Victoria, Australia.
 You need Python 3.10 or newer and about 100 MB of disk space. No Google Earth
 Engine account is needed.
 
-    git clone https://github.com/YOUR-GITHUB-USERNAME/fire-embedding-analogs
+    git clone https://github.com/hammedakano/fire-embedding-analogs
     cd fire-embedding-analogs
     pip install -e .
     python scripts/download_data.py --record ZENODO-RECORD-ID
