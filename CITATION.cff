@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this software or the archived data, please cite the paper, the software and the data."
 repository-code: "https://github.com/hammedakano/fire-embedding-analogs"
-# doi: add the Zenodo concept DOI of this software after the first release
+doi: 10.5281/zenodo.23385052
 title: "fireanalogs: retrieval-augmented analog prediction of wildfire burn severity"
 version: 1.0.0
-date-released: 2026-10-14
+date-released: 2026-10-15
 license: MIT
 type: software
 authors:
@@ -45,3 +45,21 @@ references:
         given-names: Omosalewa
     year: 2026
     notes: "Under review. Update with journal, volume and DOI on acceptance."
+  - type: dataset
+    title: "FireEmbeddings: Geospatial foundation embeddings enable retrieval-augmented analog prediction of wildfire burn severity and built exposure"
+    authors:
+      - family-names: Akano
+        given-names: Hammed
+      - family-names: Naicker
+        given-names: Rowan
+      - family-names: Crabbe
+        given-names: Richard Azu
+      - family-names: Young
+        given-names: Mary
+      - family-names: Odebiri
+        given-names: Omosalewa
+    year: 2026
+    version: 1.0.0
+    doi: 10.5281/zenodo.23384287
+    publisher:
+      name: Zenodo

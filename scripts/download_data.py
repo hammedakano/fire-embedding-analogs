@@ -60,16 +60,27 @@ def download(url: str, target: Path) -> None:
         shutil.copyfileobj(response, out)
 
 
+def _file_entries(meta: dict) -> list[dict]:
+    """Zenodo lists files either as a list or as {"entries": {...}}; accept both."""
+    files = meta.get("files", [])
+    if isinstance(files, dict):
+        entries = files.get("entries", files)
+        files = list(entries.values()) if isinstance(entries, dict) else list(entries)
+    return [f for f in files if isinstance(f, dict)]
+
+
 def fetch_record(record: str, workdir: Path, api: str = API) -> list[Path]:
     """Download every zip in a Zenodo record and verify its MD5."""
     with urllib.request.urlopen(api.format(record=record)) as response:
         meta = json.load(response)
     zips = []
-    for entry in meta.get("files", []):
+    for entry in sorted(_file_entries(meta), key=lambda e: e.get("key") or e.get("filename") or ""):
         name = entry.get("key") or entry.get("filename")
-        if not name.endswith(".zip"):
+        if not name or not name.endswith(".zip"):
             continue
-        url = entry["links"].get("self") or entry["links"].get("download")
+        links = entry.get("links", {})
+        url = (links.get("self") or links.get("content") or links.get("download")
+               or f"https://zenodo.org/records/{record}/files/{name}?download=1")
         target = workdir / name
         download(url, target)
         algorithm, _, expected = entry.get("checksum", "").partition(":")

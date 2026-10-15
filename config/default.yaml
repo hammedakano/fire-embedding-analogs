@@ -10,7 +10,7 @@ zenodo:
   # Record ID of the data archive, the number at the end of its Zenodo URL.
   # Fill in after publishing, so that scripts/download_data.py works with no
   # arguments.
-  record_id: null
+  record_id: 23384287
 
 earth_engine:
   # Fire perimeter asset. Replace with your own copy of the VicEmergency

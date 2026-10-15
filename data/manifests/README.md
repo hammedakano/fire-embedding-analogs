@@ -2,8 +2,9 @@
 
 The data are not stored in git. Get them with
 
-    python scripts/download_data.py --record ZENODO-RECORD-ID
+    python scripts/download_data.py
 
+from Zenodo record 23384287 (https://doi.org/10.5281/zenodo.23384287),
 which places them here:
 
     data/

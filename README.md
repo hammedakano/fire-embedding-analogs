@@ -18,7 +18,7 @@ Engine account is needed.
     git clone https://github.com/hammedakano/fire-embedding-analogs
     cd fire-embedding-analogs
     pip install -e .
-    python scripts/download_data.py --record ZENODO-RECORD-ID
+    python scripts/download_data.py
     python scripts/reproduce.py
 
 The last command takes under a minute. It writes every table and figure to
@@ -103,7 +103,10 @@ revised, so a fresh export can differ slightly from the archive.
 
 ## Data and licences
 
-The data are archived on Zenodo, not in this repository. The code is under
+The data are archived on Zenodo, not in this repository, at
+https://doi.org/10.5281/zenodo.23384287 (six zip files, which
+`scripts/download_data.py` downloads, checks and combines). This code is
+archived on Zenodo at https://doi.org/10.5281/zenodo.23385052. The code is under
 the MIT licence (`LICENSE`). The data are under CC BY 4.0 with the source
 attributions listed in `LICENSE-data.md`.
 
