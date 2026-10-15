@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fireanalogs"
-version = "1.0.0"
+version = "1.0.1"
 description = "Retrieval-augmented analog prediction of wildfire burn severity from geospatial foundation embeddings"
 readme = "README.md"
 requires-python = ">=3.10"

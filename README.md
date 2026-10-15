@@ -105,8 +105,8 @@ revised, so a fresh export can differ slightly from the archive.
 
 The data are archived on Zenodo, not in this repository, at
 https://doi.org/10.5281/zenodo.23384287 (six zip files, which
-`scripts/download_data.py` downloads, checks and combines). This code is
-archived on Zenodo at https://doi.org/10.5281/zenodo.23385052. The code is under
+`scripts/download_data.py` downloads, checks and combines). Each release of
+this code is archived on Zenodo through the GitHub integration. The code is under
 the MIT licence (`LICENSE`). The data are under CC BY 4.0 with the source
 attributions listed in `LICENSE-data.md`.
 
