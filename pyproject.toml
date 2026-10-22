@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fireanalogs"
+version = "1.0.0"
+description = "Retrieval-augmented analog prediction of wildfire burn severity from geospatial foundation embeddings"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Hammed Akano" },
+  { name = "Rowan Naicker" },
+  { name = "Richard A. Crabbe" },
+  { name = "Mary Young" },
+  { name = "Omosalewa Odebiri" },
+]
+keywords = [
+  "wildfire", "burn severity", "geospatial foundation models",
+  "satellite embeddings", "analog retrieval", "remote sensing",
+]
+dependencies = [
+  "numpy>=1.26,<2.2",
+  "pandas>=2.1,<2.3",
+  "scipy>=1.11,<1.15",
+  "scikit-learn>=1.3,<1.6",
+  "statsmodels>=0.14,<0.15",
+  "matplotlib>=3.8,<3.10",
+  "rasterio>=1.3,<1.5",
+  "pyyaml>=6.0,<7.0",
+]
+
+[project.optional-dependencies]
+gee = ["earthengine-api>=0.1.390"]
+dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.5", "jupyter>=1.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 95
+target-version = "py310"

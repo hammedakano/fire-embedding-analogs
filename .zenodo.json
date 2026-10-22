@@ -1,0 +1,22 @@
+{
+  "title": "fireanalogs: retrieval-augmented analog prediction of wildfire burn severity from geospatial foundation embeddings",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    { "name": "Akano, Hammed", "affiliation": "Deakin University" },
+    { "name": "Naicker, Rowan", "affiliation": "University of KwaZulu-Natal" },
+    { "name": "Crabbe, Richard A.", "affiliation": "Charles Darwin University" },
+    { "name": "Young, Mary", "affiliation": "Deakin University" },
+    { "name": "Odebiri, Omosalewa", "affiliation": "Deakin University" }
+  ],
+  "keywords": [
+    "wildfire",
+    "burn severity",
+    "geospatial foundation models",
+    "satellite embeddings",
+    "analog retrieval",
+    "Google Earth Engine",
+    "Victoria Australia"
+  ],
+  "description": "Reference implementation and derived data for a retrieval-augmented analog framework that uses pre-fire satellite foundation embeddings to retrieve analogous historical fires and transfer their observed fuel by slope high-severity probabilities to withheld target fires, with built-surface exposure screening."
+}

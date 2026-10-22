@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this software or the archived data, please cite both the software and the paper."
+title: "fireanalogs: retrieval-augmented analog prediction of wildfire burn severity"
+version: 1.0.0
+date-released: 2026-09-10
+license: MIT
+type: software
+authors:
+  - family-names: Akano
+    given-names: Hammed
+    affiliation: "School of Life and Environmental Sciences, Deakin University"
+  - family-names: Naicker
+    given-names: Rowan
+    affiliation: "University of KwaZulu-Natal"
+  - family-names: Crabbe
+    given-names: Richard A.
+    affiliation: "Charles Darwin University"
+  - family-names: Young
+    given-names: Mary
+    affiliation: "School of Life and Environmental Sciences, Deakin University"
+  - family-names: Odebiri
+    given-names: Omosalewa
+    affiliation: "School of Life and Environmental Sciences, Deakin University"
+keywords:
+  - wildfire
+  - burn severity
+  - geospatial foundation models
+  - satellite embeddings
+  - analog retrieval
+references:
+  - type: article
+    title: "Geospatial foundation embeddings for analog-based screening of wildfire burn severity and built-surface exposure"
+    authors:
+      - family-names: Akano
+        given-names: Hammed
+      - family-names: Naicker
+        given-names: Rowan
+      - family-names: Crabbe
+        given-names: Richard A.
+      - family-names: Young
+        given-names: Mary
+      - family-names: Odebiri
+        given-names: Omosalewa
+    year: 2026
+    notes: "Under review. Update with journal, volume and DOI on acceptance."

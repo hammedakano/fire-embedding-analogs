@@ -1,0 +1,37 @@
+# Credentials and secrets. Never commit these.
+*.pem
+*.key
+*credentials*.json
+*service-account*.json
+.env
+.earthengine/
+~/.config/earthengine/
+
+# Data. Large inputs and outputs live on Zenodo, not in git.
+data/raw/
+data/interim/
+data/rasters/
+data/*.csv
+!data/manifests/*.csv
+results/*.csv
+results/*.png
+results/*.tif
+
+# Python
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Notebooks
+.ipynb_checkpoints/
+*.executed.ipynb
+
+# Editors and operating systems
+.DS_Store
+.vscode/
+.idea/
